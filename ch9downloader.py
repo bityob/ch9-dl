@@ -18,10 +18,10 @@ TYPE = "Events" #
 NAME = "dotnetconf/2017" 
 # "mp4high" (high quality) or "mp4" (low quality) or "mp3" (just mp3, sound without video), [I didn't succeeded to get mp4mid]
 QUALITY = "mp4high"
-FILE_EXTENSION = "." + QUALITY[:3]
+# FILE_EXTENSION = "." + QUALITY[:3]
 
-FEED = BASE_FEED.format(type=TYPE, name=NAME, quality=QUALITY)
-print("Current feed: " + FEED)
+# FEED = BASE_FEED.format(type=TYPE, name=NAME, quality=QUALITY)
+# print("Current feed: " + FEED)
 
 def handleunicode(title):
     return title.encode(encoding='ascii',errors='replace')
@@ -74,5 +74,12 @@ def main(url, name, file_extension):
     print("Found %d sessions..." % len(sessions))
     download(sessions)
 
+def run(type, name, quality):
+    url = BASE_FEED.format(type=type, name=name, quality=quality)
+    print("Current feed: " + url)
+    file_extension = "." + quality[:3]
+
+    main(url, name, file_extension)
+
 if __name__ == '__main__':
-    main(FEED, NAME, FILE_EXTENSION)
+    run(TYPE, NAME, QUALITY)
