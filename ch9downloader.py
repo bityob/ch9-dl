@@ -1,6 +1,9 @@
 #!/usr/bin/python
-
-import os, urllib, feedparser, math, sys
+import os
+import urllib
+import feedparser
+import math
+import sys
 
 BASE_FEED = "https://s.ch9.ms/{type}/{name}/RSS/{quality}"
 
@@ -13,7 +16,7 @@ TYPE = "Events" #
 # "Azure-Friday" (show) or "dotnetconf/2017" (event, must specify the year)
 NAME = "dotnetconf/2017" 
 # "mp4high" (high quality) or "mp4" (low quality) or "mp3" (just mp3, sound without video), [I didn't succeeded to get mp4mid]
-QUALITY = "mp3"
+QUALITY = "mp4high"
 FILE_EXTENSION = "." + QUALITY[:3]
 
 FEED = BASE_FEED.format(type=TYPE, name=NAME, quality=QUALITY)
@@ -66,7 +69,10 @@ def download(sessions):
         else:
             print("%s already exists... pass" % fname)
 
-if __name__ == '__main__':
+def main():
     sessions = getsessions()
     print("Found %d sessions..." % len(sessions))
     download(sessions)
+
+if __name__ == '__main__':
+    main()
