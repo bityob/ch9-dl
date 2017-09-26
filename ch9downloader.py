@@ -2,24 +2,29 @@
 
 import os, urllib, feedparser, math, sys
 
-
 BASE_FEED = "https://s.ch9.ms/{type}/{name}/RSS/{quality}"
 
 # There are mutliple types of feeds, "Events" or "Shows"
 # Event example - http://channel9.msdn.com/Shows/Azure-Friday/RSS/mp4high
 # Show example - https://s.ch9.ms/Events/dotnetconf/2017/RSS/mp4high
-TYPE = "Events"
-NAME = "dotnetconf/2017" # "Azure-Friday" or "dotnetconf/2017"
-QUALITY = "mp3" # "mp4high" / "mp4" / "mp3", didn't ssucceded to get mp4mid
+
+# "Events" or "Shows"
+TYPE = "Events" # 
+# "Azure-Friday" (show) or "dotnetconf/2017" (event, must specify the year)
+NAME = "dotnetconf/2017" 
+# "mp4high" (high quality) or "mp4" (low quality) or "mp3" (just mp3, sound without video), [I didn't succeeded to get mp4mid]
+QUALITY = "mp3"
+FILE_EXTENSION = "." + QUALITY[:3]
+
 FEED = BASE_FEED.format(type=TYPE, name=NAME, quality=QUALITY)
-print(FEED)
+print("Current feed: " + FEED)
 
 def handleunicode(title):
     return title.encode(encoding='ascii',errors='replace')
 
 def tofile(title):
     title = title.replace("?", "-").replace("$", "-").replace("/", "-").replace(":", "-").replace(",", "-").replace("<", "").replace(">","")
-    return title + ".mp4"
+    return title + FILE_EXTENSION
 
 def getsessions():
     '''
