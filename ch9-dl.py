@@ -76,8 +76,8 @@ def get_args():
                                             """'Azure-Friday' (For a Show) or 'dotnetconf/2017'""" \
                                             """(For an event, you must specify the year)""",
                                             required=True)
-    parser.add_argument("-q", "--quality", choices=["mp4high", "mp4", "mp3"],
-                        help="'mp4high' (high quality) or 'mp4' (low quality) or 'mp3' (just mp3, sound without video)",
+    parser.add_argument("-q", "--quality", choices=["mp4high", "mp4med", "mp4", "mp3"],
+                        help="'mp4high' (high quality) or 'mp4med' (medium quailiy) or 'mp4' (low quality) or 'mp3' (just mp3, sound without video)",
                         required=True)
     args = parser.parse_args(sys.argv[1:])
 
