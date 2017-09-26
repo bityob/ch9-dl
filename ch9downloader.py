@@ -4,24 +4,10 @@ import urllib
 import feedparser
 import math
 import sys
-import click
+import argparse
+import re
 
 BASE_FEED = "https://s.ch9.ms/{type}/{name}/RSS/{quality}"
-
-# There are mutliple types of feeds, "Events" or "Shows"
-# Event example - http://channel9.msdn.com/Shows/Azure-Friday/RSS/mp4high
-# Show example - https://s.ch9.ms/Events/dotnetconf/2017/RSS/mp4high
-
-# "Events" or "Shows"
-TYPE = "Events" # 
-# "Azure-Friday" (show) or "dotnetconf/2017" (event, must specify the year)
-NAME = "dotnetconf/2017" 
-# "mp4high" (high quality) or "mp4" (low quality) or "mp3" (just mp3, sound without video), [I didn't succeeded to get mp4mid]
-QUALITY = "mp4high"
-# FILE_EXTENSION = "." + QUALITY[:3]
-
-# FEED = BASE_FEED.format(type=TYPE, name=NAME, quality=QUALITY)
-# print("Current feed: " + FEED)
 
 def handleunicode(title):
     return title.encode(encoding='ascii',errors='replace')
@@ -81,5 +67,28 @@ def run(type, name, quality):
 
     main(url, name, file_extension)
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-t", "--type", choices=["Events", "Shows"],
+                                        help="There are two types of series: 'Events' or 'Shows'",
+                                        required=True)
+    parser.add_argument("-n", "--name", help="""The name of the series to download: """ \
+                                            """'Azure-Friday' (For a Show) or 'dotnetconf/2017'""" \
+                                            """(For an event, you must specify the year)""",
+                                            required=True)
+    parser.add_argument("-q", "--quality", choices=["mp4high", "mp4", "mp3"],
+                        help="'mp4high' (high quality) or 'mp4' (low quality) or 'mp3' (just mp3, sound without video)",
+                        required=True)
+    args = parser.parse_args(sys.argv[1:])
+
+    # validate if it is an event, that the name pattern is 'confname/year'
+    pattern = '\w+/\d{4}'
+    if args.type == "Events" and not re.match(pattern, args.name):
+        parser.error("For events, the name pattern must be: '%s', for example: 'dotnetconf/2017'" % pattern)
+
+    return args
+
 if __name__ == '__main__':
-    run(TYPE, NAME, QUALITY)
+    args = get_args()
+
+    run(args.type, args.name, args.quality)
