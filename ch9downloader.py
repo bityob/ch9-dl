@@ -4,6 +4,7 @@ import urllib
 import feedparser
 import math
 import sys
+import click
 
 BASE_FEED = "https://s.ch9.ms/{type}/{name}/RSS/{quality}"
 
@@ -25,22 +26,21 @@ print("Current feed: " + FEED)
 def handleunicode(title):
     return title.encode(encoding='ascii',errors='replace')
 
-def tofile(title):
+def tofile(title, file_extension):
     title = title.replace("?", "-").replace("$", "-").replace("/", "-").replace(":", "-").replace(",", "-").replace("<", "").replace(">","")
-    return title + FILE_EXTENSION
+    return title + file_extension
 
-def getsessions():
+def getsessions(url, name, file_extension):
     '''
     This requires feedparser to be loaded. E.g (pip install feedparser)
     '''
     try:	
-        url = FEED
         rss = feedparser.parse(url)
         
-        if not os.path.exists(NAME):
-            os.makedirs(NAME)
+        if not os.path.exists(name):
+            os.makedirs(name)
 
-        return [(os.path.join(NAME, tofile(handleunicode(e.title))), e.enclosures[0].href) for e in rss.entries]
+        return [(os.path.join(name, tofile(handleunicode(e.title), file_extension)), e.enclosures[0].href) for e in rss.entries]
     except Exception as ex:
         print("Error reading Session RSS feed")
         raise
@@ -69,10 +69,10 @@ def download(sessions):
         else:
             print("%s already exists... pass" % fname)
 
-def main():
-    sessions = getsessions()
+def main(url, name, file_extension):
+    sessions = getsessions(url, name, file_extension)
     print("Found %d sessions..." % len(sessions))
     download(sessions)
 
 if __name__ == '__main__':
-    main()
+    main(FEED, NAME, FILE_EXTENSION)
